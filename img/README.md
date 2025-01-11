@@ -1,4 +1,4 @@
-# Example gallery images for the POINCARE programn output
+# Example gallery images for the POINCARE program output
 
 ## Copyright
 Copyright (C) 1997-2025, Fredrik Jonsson, under GPLv3. See enclosed LICENSE.
