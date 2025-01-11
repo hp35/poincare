@@ -47,7 +47,8 @@ example-d-solid:
 		--arrow 1.0 0.7 -0.58 1.0 0.7 0.15 0 0.9 \
 		--arrow 0.28 0.9 0.52 0.3 0.9 1.5 0 0.9
 	$(METAPOST) example-d.mp
-	$(TEX) -jobname=example-d '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-d.1}}\bye'
+	$(TEX) -jobname=example-d '\input epsf\nopagenumbers\
+	       \centerline{\epsfxsize=155mm\epsfbox{example-d.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-d -o example-d.eps
 	@$(PS2PDF) example-d.eps example-d.pdf
 	@$(PDFCROP) example-d.pdf example-d-crop.pdf
