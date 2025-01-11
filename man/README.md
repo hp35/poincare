@@ -5,3 +5,301 @@ Copyright (C) 1997-2025, Fredrik Jonsson, under GPLv3. See enclosed LICENSE.
 
 ## Location of master source code
 The source and documentation can be found at https://github.com/hp35/poincare
+
+## Command line options and usage
+POINCARE(1)                      User Commands                     POINCARE(1)
+
+NAME
+       poincare - map Stokes parameters onto the Poincaré sphere
+
+SYNOPSIS
+       poincare [options]
+
+DESCRIPTION
+       Read  Stokes parameter triplets from an external file, of format as de‐
+       scribed in this documentation, and generate  MetaPost  code  describing
+       the mapping of the read trajectory or trajectories of Stokes parameters
+       onto the Poincaré sphere.
+
+       The  generated  MetaPost  code  can in turn be compiled into, say, DVI,
+       EPS, PDF or SVG images to be included in TeX, LibreOffice or Word  dou‐
+       ments.  MetaPost  compilation  is on Linux systems typically done using
+       the mpost tool, installed together with texlive or similar standard TeX
+       distributions.
+
+       Mandatory arguments to long options are  mandatory  for  short  options
+       too.
+
+OPTIONS
+       -h, --help
+              Show help message and exit clean.
+
+       -v, --verbose
+              Toggle verbose mode; show beautiful ASCII. Default: off.
+
+       -s, --save_memory
+              Toggle memory save mode; spare some RAM. Default: off.
+
+       -V, --version
+              Show program version and exit clean.
+
+       -f, --inputfile FILENAME
+              Read  input  Stokes-parameters from file <name>.  The input file
+              may contain an arbitrary number of separate paths, and the  for‐
+              mat of the file is
+
+                  p
+                  <s1> <s2> <s3>       [1:st triplet, path 1]
+                  <s1> <s2> <s3>       [2:nd triplet, path 1]
+                     .  .  .
+                  <s1> <s2> <s3>       [M:th triplet, path 1]
+                  q
+                  p
+                  <s1> <s2> <s3>       [1:st triplet, path 2]
+                     .  .  .
+                  <s1> <s2> <s3>       [N:th triplet, path 2]
+                  q
+                     .  .  .                   [etc.]
+
+              Thus,  each  separate  path should be defined by an initial 'p',
+              after which each following row contains a triplet of Stokes  pa‐
+              rameters. After the Stokes parameter triplet, comments and addi‐
+              tional  information  may  be  written (ignored by program) until
+              linefeed. Finally, each separate path is ended with a 'q'  on  a
+              separate line.
+
+              The  only  exception  to the ignoring of the rest of the line as
+              described above is if there is a tick mark and possibly an asso‐
+              ciated label with the Stokes triplet. In this case, the  triplet
+              will  be followed by a single "t", with an optional label speci‐
+              fied by a following
+
+                  l <position> "<TeX-formatted label>".
+
+              This way, positions along the mapped trajectories can be  easily
+              indicated in the input data to the Poincare program.
+
+              Thus,  to  summarize, each row of data in the the input file has
+              the format
+
+                  <s1> <s2> <s3> [t [l <pos> "<TeX label>"]]
+
+       --paththickness THICKNESS
+              Specifies the thickness in PostScript points (pt) of the path to
+              draw.  Default: <val> = 1.0 [pt]. [1 pt == 1/72 inch]
+
+       --draw_hidden_dashed
+              Toggles between drawing of hidden parts of  the  specified  path
+              with dashed and solid lines. Default: off. (Solid lines)
+
+       --draw_paths_as_arrows
+              Draw  all  specified trajectories as arrowed curves, with arrow‐
+              heads at the and point. This option is useful whenever one  wish
+              to, for example, show on the direction of evolution of a certain
+              trajectory, or the direction of rotation of the Stokes vector in
+              a  circular path. With this option it is often useful to chop up
+              the trajectory of the original input file into  subtrajectories,
+              so  as  to  create  multiple arrow heads in the same trajectory.
+              See also the --reverse_arrow_paths option.
+
+       --reverse_arrow_paths
+              Reverse  the  direction  of   all   arrows   drawn   using   the
+              --draw_paths_as_arrows  option.  This  is  useful if the sampled
+              trajectory data are not ordered in the natural direction of tra‐
+              jectory traversal.
+
+       --auxsource FILENAME
+              Causes the auxiliary MetaPost file FILENAME to  be  included  at
+              the  end  of the generated MetaPost source. Useful for including
+              additional comments, labels etc. in the figure.
+
+       --arrowthickness THICKNESS
+              Analogous to the --paththickness option, but with the difference
+              that this one applies to (eventually occuring) the thickness  of
+              additional arrows to be drawn with the --arrow option.  Default:
+              THICKNESS=0.6 [pt].
+
+       --arrowheadangle DEGREES
+              Specifies  the  head  angle of any arrows used in the mapping of
+              Stokes parameters on the Poincare sphere. Notice that this  does
+              not affect the head angles of the arrows of the coordinate axes.
+              Default value: 30.0 degrees. (DEGREES=30.0)
+
+       -b, --bezier
+              Toggle Bezier mode, in which Bezier interpolation is used in or‐
+              der to obtain smooth paths for the input trajectory(-ies), spec‐
+              ified  with  the -f option. Otherwise regular piecewise stright-
+              line type lines are used.  Default: off.
+
+       -o, --outputfile FILENAME
+              Write output MetaPost-code [1] to file FILENAME.
+
+       -e, --epsoutput FILENAME
+              In addition to just generating  MetaPost-code  for  the  figure,
+              also  try  to  generate a complete EPS (Encapsulated PostScript)
+              figure, using FILENAME as the base name for the job. This option
+              relies on system calls for TeX, MetaPost, and DVIPS, and  relies
+              on  that  they are properly installed in the system environment.
+              The EPS output and the intermediate TeX, DVI, and and log  files
+              will  from  the  base  name be named FILENAME.eps, FILENAME.tex,
+              FILENAME.dvi, and FILENAME.log, respectively.
+
+       --psi, --rotatepsi DEGREES
+              When mapping Poincare-sphere and corresponding coordinate-system
+              (S_1,S_2,S_3), first rotate angle  psi  ==  DEGREES  around  the
+              'z'-axis (S_3).  Default: -40.0 degrees (DEGREES=-40.0)
+
+       --phi, --rotatephi DEGREES
+              When mapping Poincare-sphere and corresponding coordinate-system
+              (S_1,S_2,S_3),  after the first rotation (psi above), rotate an‐
+              gle phi == DEGREES around the 'y'-axis (S_2). Default: 15.0  de‐
+              grees (DEGREES=15.0)
+
+       --rhodivisor VALUE
+              Number of segments in radial direction of the 2D-mapped Poincare
+              sphere.  Default: 50.
+
+       --phidivisor VALUE
+              Number  of  segments  in  tangential  direction of the 2D-mapped
+              Poincare sphere.  Default: 80.
+
+       --scalefactor VALUE
+              Specifies the radius of the printed  Poincare  sphere  (Encapsu‐
+              lated PostScript) in millimetres.
+
+       --shading W1 W2
+              Specifies  the minimum (W1) and maximum (W2) whiteness values of
+              the Poincare sphere to draw (using the Phong shading algorithm).
+              Here:
+                      Wx == 0.0  corresponds to 'white'
+                      Wx == 1.0  corresponds to 'white'
+
+              Default values:  W1 == 0.65,  W2 == 0.99
+
+       --hiddengraytone W
+              Specifies the whiteness W to be used in drawing trajectory parts
+              that are hidden behind the Poincare sphere.
+                      W == 0.0  corresponds to black,
+                      W == 1.0  corresponds to white.
+
+       --axislength V
+              Specifies the lengths of negative and positive parts of the  co‐
+              ordinate  axes,  on  the  form V = XMIN XMAX YMIN YMAX ZMIN ZMAX
+              with 'x' as the s1-axis, to the radius of the  Poincare  sphere;
+              thus  a  value  of  V=1.0 correspond to the radius, while  V=1.5
+              correspond to an axis length such that 50 percent of the axis is
+              showed outside the Poincare sphere.
+
+              Default:
+                      XMIN = YMIN = ZMIN = 0.3 (30 %)
+                      XMAX = YMAX = ZMAX = 1.5 (150 %)
+
+       --axislabels S
+              Specifies the labels of the coordinate axes, on the form S =  S1
+              P1  S2 P2 S3 P3, where S1, S2, and S3 are strings to use for the
+              s1-, s2-, and s3-labels, respectively, and where the strings P1,
+              P2, and P3 determine the position of respective label,  relative
+              the  end  point of the arrow of respective axis. The label posi‐
+              tion is determined by the following syntax:
+
+                      lft    Left
+                      rt     Right
+                      top    Top
+                      bot    Bottom
+                      ulft   Upper left
+                      urt    Upper Right
+                      llft   Lower left
+                      lrt    Lower right
+
+              The label strings should be expressed in plain TeX [2]  mathmode
+              syntax.  Default: S1 = $S_1$, S2 = $S_2$, S3 = $S_3$.
+
+              Important  note:   No  blank  spaces  are  allowed  in the label
+              strings.
+
+       --draw_axes_inside S
+              Toggles drawing (with dashed lines) of  coordinate  axes  inside
+              Poincare sphere.  Default: off.
+
+       -n S, --normalize S
+              Instead   of   making   a  trajectory  plot  of  the  parameters
+              (s1,s2,s3), contained in the file specified by  the  -f  option,
+              instead  use the normalized parameter (s1/s0,s2/s0,s3/s0), which
+              for completely  polarized  light  corresponds  to  a  trajectory
+              mapped  directly  on the Poincare sphere, without any deviations
+              fromthe spheres surface. This option is particularly useful when
+              only the state of polarization (and not the  intensity)  of  the
+              light  is  of  interest  (as is most often the case when dealing
+              with the (S_1,S_2,S_3) triplet of Stokes parameters).
+
+       --arrow PA PB V
+              Display an arrow, in Stokes parameter space, from point  PA,  at
+              the  command-line  specified  as  the triplet of floats S1A  S2A
+              S3A, to the point PB, similarly specified as S1B S2B S3B.
+
+              This option is useful for, say, pointing out  certain  operation
+              cycles  in polarization domain, or just as an easy direct way of
+              creating paths on the Poincare sphere without having to use  ex‐
+              ternal  input  files  (that is to say, using the --auxsource op‐
+              tion).
+
+              The arrow is drawn as a circular arc onto the  Poincare  sphere,
+              through the closest path between the points.  The --arrow option
+              may  appear  repeated  times,for producing multiple arrows. Cur‐
+              rently there is a limit of 24 arrows in one single Poincare  map
+              (which  should  do  for  most people).  The last argument V is a
+              pair of float values which determines the style of the drawn ar‐
+              row. The pair V should be specified as V1  V2  on  the  command-
+              line.
+
+              The  first parameter V1 determines the line-type of the arrow to
+              draw.  The rules are:
+                      -0.5 <= V1 < 0.5   -   Solid line
+                       0.5 <= V1 < 1.5   -   Dashed line
+
+              The second parameter, V2, determines the blackness of the  arrow
+              to  draw,  where  V2  ==  0  corresponds to white and V2 == 1 to
+              black.
+
+SUFFIX CONVENTIONS OF THE FILES
+               .mp    - MetaPost source code (ASCII) [1]
+               .tex   - TeX source code (ASCII) [2]
+               .dvi   - Device independent output file from TeX [2]
+               .ps    - PostScript [3]
+               .eps   - Encapsulated PostScript [3]
+
+REFERENCES
+       [1] For information on the MetaPost program for typesetting figures,
+           see for example John Hobbys page, at
+           http://cm.bell-labs.com/who/hobby/MetaPost.html.
+
+       [2] For information on the TeX typesetting system, as well as
+           references to the dvips program, see for example the homepage
+           of the TeX Users Group (TUG), at http://www.tug.org.
+
+       [3] For information on the PostScript programming language, see for
+           example the homepage of Adobe Systems Inc., at
+           http://www.adobe.com/products/postscript/main.html,
+           or 'PostScript Language - Tutorial and Cookbook' (Addison-Wesley,
+           Reading, Massachusetts, 1985), ISBN 0-201-10179-3.
+
+   Exit status:
+       0      if OK,
+
+       1      otherwise.
+
+AUTHOR
+       Written by Fredrik Jonsson 1997-2025.
+
+COPYRIGHT
+       Copyright © 2025 Fredrik Jonsson, under GNU GPLv3  <https://gnu.org/li‐
+       censes/gpl.html>.
+       This  is  free  software:  you  are free to change and redistribute it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+SEE ALSO
+       mpost(1), tex(1), dvips(1)
+
+       Full documentation <https://github.com/hp35/poincare>
+
+Stokes parameter mapping         January 2025                      POINCARE(1)
