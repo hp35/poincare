@@ -4,7 +4,15 @@ Read Stokes parameter triplets from an external file, of format as described in
 this documentation, and generate  MetaPost  code  describing the mapping of the
 read trajectory or trajectories of Stokes parameters onto the Poincaré sphere.
 
-The  generated  MetaPost  code  can in turn be compiled into, say, DVI, EPS, PDF or SVG images to be included in TeX, LibreOffice or Word  documents.  MetaPost  compilation  is on Linux systems typically done using the mpost tool, installed together with texlive or similar standard TeX distributions.
+The  generated  MetaPost  code  can in turn be compiled into, say, DVI, EPS,
+PDF or SVG images to be included in TeX, LibreOffice or Word  documents.
+MetaPost  compilation  is on Linux systems typically done using the mpost
+tool, installed together with texlive or similar standard TeX distributions.
+
+## Options for running the program
+For a complete set of options accepted by the program, either confer the
+enclosed manual page `poincare.1` [man/poincare.1](man/poincare.1) or run
+the program with the help switch as `poincare -h` or `poincare --help`.
 
 ## Examples
 
