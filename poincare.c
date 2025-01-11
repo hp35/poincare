@@ -981,8 +981,8 @@ void showsomehelp(void) {
  "                         TeX [2] mathmode syntax.\n");
    fprintf(stdout,
  "                         Default: <s1> = $S_1$, <s2> = $S_2$, <s3> = $S_3$\n"
- "                         Imortant note:  No blank spaces are allowed in\n"
- "                         the strings.\n"
+ "                         Important note:  No blank spaces are allowed in\n"
+ "                         the label strings.\n"
  "\n");
    fprintf(stdout,
  " --draw_axes_inside      Toggles drawing (with dashed lines) of coordinate\n"
