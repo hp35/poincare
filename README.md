@@ -11,8 +11,8 @@ tool, installed together with texlive or similar standard TeX distributions.
 
 ## Options for running the program
 For a complete set of options accepted by the program, either confer the
-enclosed manual page `poincare.1` [man/poincare.1](man/poincare.1) or run
-the program with the help switch as `poincare -h` or `poincare --help`.
+enclosed manual page `poincare.1` (see [man/poincare.1](man/poincare.1))
+or run the program with the help switch as `poincare -h` or `poincare --help`.
 
 ## Examples
 
