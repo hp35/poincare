@@ -3079,7 +3079,7 @@ void write_included_auxiliary_source(FILE *outfileptr,pmap map) {
       fprintf(outfileptr,
          "%%\n"
          "%% The following external file is included"
-         " (using the --auxsource option): %s  [MetaPost source]\n"
+         " (using the --auxsource option):\n%%    %s  [MetaPost source]\n"
          "%%\n"
          "   input %s\n",map.auxfilename, map.auxfilename);
    }
