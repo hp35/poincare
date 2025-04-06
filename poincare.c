@@ -457,6 +457,8 @@
 extern char *optarg;
 char *progname;
 
+int isnan(double x);
+
 typedef struct {
    double **arrows;
    int numarrows;
@@ -820,7 +822,8 @@ void showsomehelp(void) {
  "                         mark and possibly an associated label with the\n"
  "                         Stokes-triplet. In this case, the triplet will be\n"
  "                         followed by a single \"t\", with an optional label\n"
- "                         specified by a following\n"
+	   "                         specified by a following\n");
+   fprintf(stdout,
  "                               l <position> \"<TeX label>\".\n"
  "                         This way, positions along the mapped trajectories\n"
  "                         can be easily indicated in the input data to the\n"
@@ -2496,11 +2499,11 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
       exit(1);
    }
    snorm=sqrt(q1*q1+q2*q2+q3*q3);
-   q1=q1/snorm;
-   q2=q2/snorm;
-   q3=q3/snorm;
+   q1/=snorm;
+   q2/=snorm;
+   q3/=snorm;
 
-   /* get normalized (unitary) Stokes vector */
+   /* Get normalized (unitary) Stokes vector. */
    s1=(*st).s1[(*st).tickmark[k]];
    s2=(*st).s2[(*st).tickmark[k]];
    s3=(*st).s3[(*st).tickmark[k]];
@@ -2510,7 +2513,7 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
    s3n=s3/s0;
 
    /* Calculate the normalized vector transverse to the tangent of path,
-    * {\bf p}={\bf s}\times{\bf q}/|{\bf s}\times{\bf q}|
+    * {\bf p}={\bf s}\times{\bf q}/|{\bf s}\times{\bf q}|.
     */
    p1=s2n*q3-s3n*q2;
    p2=s3n*q1-s1n*q3;
@@ -2536,9 +2539,25 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
 
    /* Get the screen coordinates of the ends of the tick mark */
    get_screen_coordinates(&xt,&yt,s0*s1a,s0*s2a,s0*s3a,map);
+   if (isnan(xt) || isnan(yt)) {
+     fprintf(stderr,"%s: [Case A] NaN detected by routine "
+	     "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
+	     progname, xt,yt);
+     fprintf(stderr,"%s: s0=%1.4f, s1a=%1.4f, s2a=%1.4f, s3a=%1.4f\n",
+	     progname, s0, s1a, s2a, s3a);
+      exit(1);
+   }
    (*xa)=xt;
    (*ya)=yt;
    get_screen_coordinates(&xt,&yt,s0*s1b,s0*s2b,s0*s3b,map);
+   if (isnan(xt) || isnan(yt)) {
+     fprintf(stderr,"%s: [Case B] NaN detected by routine "
+	     "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
+	     progname, xt, yt);
+     fprintf(stderr,"%s: s0=%1.4f, s1b=%1.4f, s2b=%1.4f, s3b=%1.4f\n",
+	     progname, s0, s1b, s2b, s3b);
+      exit(1);
+   }
    (*xb)=xt;
    (*yb)=yt;
 }

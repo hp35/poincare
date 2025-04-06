@@ -24,34 +24,13 @@ PS2PDF    = ps2pdf
 PDFCROP   = pdfcrop
 PDF2SVG   = pdf2svg
 
-all: $(PROJECT)
-
-# copagraph
+all: $(PROJECT) # example example-c
 
 $(PROJECT): $(PROJECT).o
 	$(CC) $(CCOPTS) -o $(PROJECT) $(PROJECT).o $(LNOPTS)
 
 $(PROJECT).o: $(PROJECT).c
 	$(CC) $(CCOPTS) -c $(PROJECT).c
-
-#	@cat ../ssfourier/data/figure-1-stokes-signal-*.csv > copagraph.dat
-copagraph:
-	make poincare
-	@./poincare --verbose --normalize --draw_hidden_dashed \
-		--inputfile copagraph.dat \
-		--outputfile copagraph.mp \
-		--axislengths 0.3 1.7 0.3 2.4 0.3 1.5 \
-		--axislabels  "s_1(t)" bot "s_2(t)" bot "s_3(t)" rt \
-		--rotatephi 15.0 --rotatepsi -60.0 --shading 0.75 0.99 \
-		--rhodivisor 50  --phidivisor 80  --scalefactor 20.0 \
-		--paththickness 0.8 --arrowthickness 0.4
-	@$(METAPOST) copagraph.mp
-	@$(TEX) -jobname=copagraph "\input macros/epsf.tex\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{copagraph.1}}\bye"
-	@$(DVIPS) $(DVIPSOPTS) copagraph -o copagraph.eps
-	@$(PS2PDF) copagraph.eps copagraph.pdf
-	@$(PDFCROP) copagraph.pdf copagraph-crop.pdf
-	@$(PDF2SVG) copagraph-crop.pdf copagraph.svg
 
 example:
 	make poincare
@@ -140,8 +119,7 @@ example-c-solid:
 		--paththickness 0.8 --arrowthickness 0.4 \
 		--arrowheadangle 20.0 --draw_paths_as_arrows
 	$(METAPOST) example-cs.mp
-	$(TEX) -jobname=example-cs '\input epsf\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{example-cs.1}}\bye'
+	$(TEX) -jobname=example-cs '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cs.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cs -o example-cs.eps
 
 example-c-chopped:
@@ -154,8 +132,7 @@ example-c-chopped:
 		--paththickness 0.8 --arrowthickness 0.4 \
 		--arrowheadangle 20.0 --draw_paths_as_arrows
 	$(METAPOST) example-cc.mp
-	$(TEX) -jobname=example-cc '\input epsf\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{example-cc.1}}\bye'
+	$(TEX) -jobname=example-cc '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cc.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cc -o example-cc.eps
 
 example-c-chopped-reversed:
@@ -169,8 +146,7 @@ example-c-chopped-reversed:
 		--arrowheadangle 20.0 --draw_paths_as_arrows \
 		--reverse_arrow_paths
 	$(METAPOST) example-ccr.mp
-	$(TEX) -jobname=example-ccr '\input epsf\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{example-ccr.1}}\bye'
+	$(TEX) -jobname=example-ccr '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-ccr.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-ccr -o example-ccr.eps
 
 example-c-chopped-dash:
@@ -183,8 +159,7 @@ example-c-chopped-dash:
 		--paththickness 0.8 --arrowthickness 0.4 \
 		--arrowheadangle 20.0 --draw_paths_as_arrows
 	$(METAPOST) example-cd.mp
-	$(TEX) -jobname=example-cd '\input epsf\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{example-cd.1}}\bye'
+	$(TEX) -jobname=example-cd '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cd.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cd -o example-cd.eps
 
 #
@@ -228,13 +203,15 @@ example-d-solid:
 		--arrow 1.0 0.7 -0.58 1.0 0.7 0.15 0 0.9 \
 		--arrow 0.28 0.9 0.52 0.3 0.9 1.5 0 0.9
 	$(METAPOST) example-d.mp
-	$(TEX) -jobname=example-d '\input epsf\nopagenumbers\
-		\centerline{\epsfxsize=155mm\epsfbox{example-d.1}}\bye'
+	$(TEX) -jobname=example-d '\input epsf\nopagenumbers		\centerline{\epsfxsize=155mm\epsfbox{example-d.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-d -o example-d.eps
+	@$(PS2PDF) example-d.eps example-d.pdf
+	@$(PDFCROP) example-d.pdf example-d-crop.pdf
+	@$(PDF2SVG) example-d-crop.pdf example-d.svg
 
 clean:
 	-rm -f *~ *.aux *.bbl *.dvi *.log *.blg *.toc *.lof *.plt *.1 *.mpx \
-		*.o poincare *.eps stoke.mp example-*.*
+		*.o poincare *.eps stoke.mp example-*.* copagraph*
 
 archive:
 	make -ik clean
