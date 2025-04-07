@@ -2263,8 +2263,8 @@ void get_screen_coordinates(double *x,double *y,
    }
 }
 
-void add_subtrajectory(FILE *outfileptr,stoketraject *st,
-      long int ka,long int kb,pmap *map,char type[256]) {
+void add_subtrajectory(FILE *outfileptr, stoketraject *st,
+      long int ka, long int kb, pmap *map, short type) {
    long int k;
    short j;
    double x,y; /* trash variables for screen coordinates */
@@ -2299,7 +2299,7 @@ void add_subtrajectory(FILE *outfileptr,stoketraject *st,
             } else {
                fprintf(outfileptr,"   draw p scaled radius");
             }
-            if (!strcmp(type,"hidden")) { /* end of a hidden segment */
+            if (type==HIDDEN) { /* end of a hidden segment */
                if ((*map).draw_hidden_dashed) {
                   fprintf(outfileptr," dashed evenly withcolor black;\n");
                } else {
@@ -2351,7 +2351,7 @@ void add_hidden_subtrajectories(FILE *outfile,stoketraject *st,pmap *map) {
                "%s: Adding hidden subtrajectory from ka=%ld to kb=%ld\n",
                progname,ka,kb);
          }
-         add_subtrajectory(outfile,st,ka,kb,map,"hidden");
+         add_subtrajectory(outfile,st,ka,kb,map,HIDDEN);
       }
       k++;
    }
@@ -2387,7 +2387,7 @@ void add_visible_subtrajectories(FILE *outfile,stoketraject *st,pmap *map) {
           */
          if (ka>1) ka--;
          if (kb<(*st).numcoords) kb++;
-         add_subtrajectory(outfile,st,ka,kb,map,"visible");
+         add_subtrajectory(outfile,st,ka,kb,map,VISIBLE);
       }
       k++;
    }
