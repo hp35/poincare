@@ -379,6 +379,15 @@
 #endif
 
 /*-----------------------------------------------------------------------------
+| Likewise, NAN should be defined by <math.h>, but I have found that this is
+| not to rely on. The easiest way to let the system generate a NAN for use in
+| the program is simply to define it as 0.0/0.0. (Yes indeed, this simple!)
+-----------------------------------------------------------------------------*/
+#ifndef NAN
+#define NAN (0.0/0.0)
+#endif
+
+/*-----------------------------------------------------------------------------
 | Definitions of maximum number of allowed coordinates and labels per
 | trajectory, as used in the allocation of memory. These fixed parameters
 | determine the following:
@@ -2478,7 +2487,10 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
       s0,s1,s2,s3,p1,p2,p3,q1,q2,q3;
 
    /* Calculate the normalized approximate tangential vector to path
-    * at the tickmark point with index k.
+    * at the tickmark point with index k. If the tangential vector is
+    * not possible to compute, say if the two defining points are equal,
+    * then the get_tickmark_screen_coordinates(...) routine simply will
+    * return (NAN,NAN) as screen coordinate, to be checked by the caller.
     */
    if ((*st).tickmark[k]==1) {
       q1=(*st).s1[(*st).tickmark[k]+1]-(*st).s1[(*st).tickmark[k]];
@@ -2499,9 +2511,19 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
       exit(1);
    }
    snorm=sqrt(q1*q1+q2*q2+q3*q3);
-   q1/=snorm;
-   q2/=snorm;
-   q3/=snorm;
+   if ((snorm) > 1.0e-10) {
+      q1/=snorm;
+      q2/=snorm;
+      q3/=snorm;
+   } else {
+      fprintf(stderr,"%s: Singular norm of (q1,q2,q3) detected.\n",progname);
+      fprintf(stderr,"%s: snorm=%1.4f, q1=%1.4f, q2=%1.4f, q3=%1.4f\n",
+	   progname,snorm,q1,q2,q3);
+      fprintf(stderr,"%s: (No tickmark projektion possible.)\n",progname);
+   (*xb)=NAN;
+   (*yb)=NAN;
+   return;
+   }
 
    /* Get normalized (unitary) Stokes vector. */
    s1=(*st).s1[(*st).tickmark[k]];
@@ -2519,9 +2541,19 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
    p2=s3n*q1-s1n*q3;
    p3=s1n*q2-s2n*q1;
    snorm=sqrt(p1*p1+p2*p2+p3*p3);
-   p1=p1/snorm;
-   p2=p2/snorm;
-   p3=p3/snorm;
+   if (isnan(snorm)) {
+      fprintf(stderr,
+         "%s: Singular norm detected for the normalized vector\n",progname);
+      fprintf(stderr,
+	 "%s: transverse to the tangent of path, p=s x q/|s x q|.\n",progname);
+      fprintf(stderr,
+	 "%s: snorm=%1.4f, p1=%1.4f, p2=%1.4f, p3=%1.4f\n",
+	      progname, snorm, p1, p2, p3);
+      exit(1);
+   }
+   p1/=snorm;
+   p2/=snorm;
+   p3/=snorm;
 
    /* Calculate the 1st endpoint of tick mark in Stokes parameter space */
    s1a=s1n+0.028213*p1;
