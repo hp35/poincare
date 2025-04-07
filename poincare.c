@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | File: poincare.c [ANSI-C conforming source code]                            |
 | Created:       November 17, 1997, Fredrik Jonsson <fj@optics.kth.se>        |
-| Last modified: January 10, 2025, Fredrik Jonsson <http://jonsson.eu>        |
+| Last modified: April 7, 2025, Fredrik Jonsson <http://jonsson.eu>           |
 | Description:                                                                |
 |       This program creates maps of Stokes parameters, visualized as         |
 |       trajectories on the Poincare sphere. The program generates MetaPost   |
@@ -345,6 +345,11 @@
 | [v.1.24]  codes. Updated the Makefile. System is now Ubuntu 24.04.1 LTS,    |
 |           Linux kernel 6.8.0-51-generic (64-bit).                           |
 |                                                                             |
+|  250407:  (Gotland) Added check for coinciding points in the                |
+| [v.1.25]  get_tickmark_screen_coordinates(...) routine; now returning       |
+|           (NAN,NAN) as screen coordinate for these special cases, to be     |
+|           checked and handled by the caller.                                |
+|                                                                             |
 | Example of usage (the figure on the front page of my PhD thesis):           |
 |                                                                             |
 |    poincare --normalize --verbose  --bezier --draw_hidden_dashed \          |
@@ -368,7 +373,7 @@
 #include <time.h>
 #include <ctype.h>
 
-#define VERSION_NUMBER "1.24"
+#define VERSION_NUMBER "1.25"
 
 /*-----------------------------------------------------------------------------
 | PI should have been defined from <math.h>, but let's be on the safe side
@@ -704,20 +709,20 @@ void scan_for_boundingbox(char infilename[256],
          done=1;
          if (fscanf(infile,"%ld",llx)==0) {
             fprintf(stderr,"Failed scanning llx in bounding box!\n");
-	    exit(FAILURE);
-	 }
+            exit(FAILURE);
+         }
          if (fscanf(infile,"%ld",lly)==0) {
             fprintf(stderr,"Failed scanning lly in bounding box!\n");
-	    exit(FAILURE);
-	 }
+            exit(FAILURE);
+         }
          if (fscanf(infile,"%ld",urx)==0) {
             fprintf(stderr,"Failed scanning urx in bounding box!\n");
-	    exit(FAILURE);
-	 }
+            exit(FAILURE);
+         }
          if (fscanf(infile,"%ld",ury)==0) {
             fprintf(stderr,"Failed scanning ury in bounding box!\n");
-	    exit(FAILURE);
-	 }
+            exit(FAILURE);
+         }
       }
    }
    if (tmpch==EOF) {
@@ -831,7 +836,7 @@ void showsomehelp(void) {
  "                         mark and possibly an associated label with the\n"
  "                         Stokes-triplet. In this case, the triplet will be\n"
  "                         followed by a single \"t\", with an optional label\n"
-	   "                         specified by a following\n");
+           "                         specified by a following\n");
    fprintf(stdout,
  "                               l <position> \"<TeX label>\".\n"
  "                         This way, positions along the mapped trajectories\n"
@@ -2481,6 +2486,11 @@ void scan_for_tickmarklabel(FILE *infileptr,stoketraject *st,pmap *map,
    }
 }
 
+/*------------------------------------------------------------------------
+| The get_tickmark_screen_coordinates(...) routine computes the end-points
+| (xa,ya) and (xb,yb) for a tickmark to be written. These coordinates are
+| returned via the reference variables (pointers) *xa, *ya, *xb, and *yb.
+------------------------------------------------------------------------*/
 void get_tickmark_screen_coordinates(double *xa,double *ya,
       double *xb,double *yb,long int k,stoketraject *st,pmap *map) {
    double xt,yt,snorm,s1n,s2n,s3n,s1a,s2a,s3a,s1b,s2b,s3b,
@@ -2511,19 +2521,20 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
       exit(1);
    }
    snorm=sqrt(q1*q1+q2*q2+q3*q3);
-   if ((snorm) > 1.0e-10) {
-      q1/=snorm;
-      q2/=snorm;
-      q3/=snorm;
-   } else {
+   if (isnan(snorm) || (snorm < 1.0e-24)) {
       fprintf(stderr,"%s: Singular norm of (q1,q2,q3) detected.\n",progname);
       fprintf(stderr,"%s: snorm=%1.4f, q1=%1.4f, q2=%1.4f, q3=%1.4f\n",
-	   progname,snorm,q1,q2,q3);
+           progname,snorm,q1,q2,q3);
       fprintf(stderr,"%s: (No tickmark projektion possible.)\n",progname);
-   (*xb)=NAN;
-   (*yb)=NAN;
-   return;
+      (*xa)=NAN;
+      (*ya)=NAN;
+      (*xb)=NAN;
+      (*yb)=NAN;
+      return;
    }
+   q1/=snorm;
+   q2/=snorm;
+   q3/=snorm;
 
    /* Get normalized (unitary) Stokes vector. */
    s1=(*st).s1[(*st).tickmark[k]];
@@ -2541,15 +2552,19 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
    p2=s3n*q1-s1n*q3;
    p3=s1n*q2-s2n*q1;
    snorm=sqrt(p1*p1+p2*p2+p3*p3);
-   if (isnan(snorm)) {
+   if (isnan(snorm) || (snorm < 1.0e-24)) {
       fprintf(stderr,
          "%s: Singular norm detected for the normalized vector\n",progname);
       fprintf(stderr,
-	 "%s: transverse to the tangent of path, p=s x q/|s x q|.\n",progname);
+         "%s: transverse to the tangent of path, p=s x q/|s x q|.\n",progname);
       fprintf(stderr,
-	 "%s: snorm=%1.4f, p1=%1.4f, p2=%1.4f, p3=%1.4f\n",
-	      progname, snorm, p1, p2, p3);
-      exit(1);
+         "%s: snorm=%1.4f, p1=%1.4f, p2=%1.4f, p3=%1.4f\n",
+         progname, snorm, p1, p2, p3);
+      (*xa)=NAN;
+      (*ya)=NAN;
+      (*xb)=NAN;
+      (*yb)=NAN;
+      return;
    }
    p1/=snorm;
    p2/=snorm;
@@ -2573,22 +2588,30 @@ void get_tickmark_screen_coordinates(double *xa,double *ya,
    get_screen_coordinates(&xt,&yt,s0*s1a,s0*s2a,s0*s3a,map);
    if (isnan(xt) || isnan(yt)) {
      fprintf(stderr,"%s: [Case A] NaN detected by routine "
-	     "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
-	     progname, xt,yt);
+             "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
+             progname, xt,yt);
      fprintf(stderr,"%s: s0=%1.4f, s1a=%1.4f, s2a=%1.4f, s3a=%1.4f\n",
-	     progname, s0, s1a, s2a, s3a);
-      exit(1);
+             progname, s0, s1a, s2a, s3a);
+      (*xa)=NAN;
+      (*ya)=NAN;
+      (*xb)=NAN;
+      (*yb)=NAN;
+      return;
    }
    (*xa)=xt;
    (*ya)=yt;
    get_screen_coordinates(&xt,&yt,s0*s1b,s0*s2b,s0*s3b,map);
    if (isnan(xt) || isnan(yt)) {
      fprintf(stderr,"%s: [Case B] NaN detected by routine "
-	     "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
-	     progname, xt, yt);
+             "get_tickmark_screen_coordinates: xt=%1.4f, yt=%1.4f\n",
+             progname, xt, yt);
      fprintf(stderr,"%s: s0=%1.4f, s1b=%1.4f, s2b=%1.4f, s3b=%1.4f\n",
-	     progname, s0, s1b, s2b, s3b);
-      exit(1);
+             progname, s0, s1b, s2b, s3b);
+      (*xa)=NAN;
+      (*ya)=NAN;
+      (*xb)=NAN;
+      (*yb)=NAN;
+      return;
    }
    (*xb)=xt;
    (*yb)=yt;
@@ -2603,14 +2626,27 @@ void add_scanned_tickmarks(FILE *outfileptr,stoketraject *st,pmap *map,
       (*map).paththickness/2.0);
    for (k=1;k<=(*st).numtickmarks;k++) {
       get_tickmark_screen_coordinates(&xa,&ya,&xb,&yb,k,st,map);
-      fprintf(outfileptr,"   p:=makepath makepen (%f,%f)--(%f,%f);\n",
-         xa,ya,xb,yb);
-      if (((*st).visible[(*st).tickmark[k]])&&(viewtype==VISIBLE)) {
-         fprintf(outfileptr,"   draw p scaled radius;\n");
-      } else if ((!((*st).visible[(*st).tickmark[k]]))&&(viewtype==HIDDEN)) {
-         fprintf(outfileptr,"   draw p scaled radius");
-         fprintf(outfileptr," withcolor %f [black,white];\n",
-            (*map).hiddengraytone);
+      if (isnan(xa)||isnan(ya)||isnan(xb)||isnan(yb)) {
+        /* If any of the returned coordinates contain a NAN, then the tickmark
+         * is deemed invalid (say, due to an attempt of finding the orthogonal
+         * direction based on two coinciding points on the Poincare sphere),
+         * and we hence simply avoid this particular tickmark.
+         */
+        fprintf(stderr,"%s: Screen coordinates for tickmark No.%d was\n",
+                progname,k);
+        fprintf(stderr,"%s: returned as NAN, indicating an invalid tickmark.\n",
+                progname);
+        fprintf(stderr,"%s: Will ignore this tickmark.\n", progname);
+      } else {
+         fprintf(outfileptr,"   p:=makepath makepen (%f,%f)--(%f,%f);\n",
+            xa,ya,xb,yb);
+         if (((*st).visible[(*st).tickmark[k]])&&(viewtype==VISIBLE)) {
+            fprintf(outfileptr,"   draw p scaled radius;\n");
+         } else if ((!((*st).visible[(*st).tickmark[k]]))&&(viewtype==HIDDEN)) {
+            fprintf(outfileptr,"   draw p scaled radius");
+            fprintf(outfileptr," withcolor %f [black,white];\n",
+               (*map).hiddengraytone);
+         }
       }
    }
 }
