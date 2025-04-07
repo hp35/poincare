@@ -24,7 +24,7 @@ PS2PDF    = ps2pdf
 PDFCROP   = pdfcrop
 PDF2SVG   = pdf2svg
 
-all: $(PROJECT) # example example-c
+all: $(PROJECT) example example-c example-d
 
 $(PROJECT): $(PROJECT).o
 	$(CC) $(CCOPTS) -o $(PROJECT) $(PROJECT).o $(LNOPTS)
@@ -121,6 +121,9 @@ example-c-solid:
 	$(METAPOST) example-cs.mp
 	$(TEX) -jobname=example-cs '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cs.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cs -o example-cs.eps
+	@$(PS2PDF) example-cs.eps example-cs.pdf
+	@$(PDFCROP) example-cs.pdf example-cs-crop.pdf
+	@$(PDF2SVG) example-cs-crop.pdf example-cs.svg
 
 example-c-chopped:
 	@./poincare --verbose --normalize --bezier \
@@ -134,6 +137,9 @@ example-c-chopped:
 	$(METAPOST) example-cc.mp
 	$(TEX) -jobname=example-cc '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cc.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cc -o example-cc.eps
+	@$(PS2PDF) example-cc.eps example-cc.pdf
+	@$(PDFCROP) example-cc.pdf example-cc-crop.pdf
+	@$(PDF2SVG) example-cc-crop.pdf example-cc.svg
 
 example-c-chopped-reversed:
 	@./poincare --verbose --normalize --bezier \
@@ -148,6 +154,9 @@ example-c-chopped-reversed:
 	$(METAPOST) example-ccr.mp
 	$(TEX) -jobname=example-ccr '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-ccr.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-ccr -o example-ccr.eps
+	@$(PS2PDF) example-ccr.eps example-ccr.pdf
+	@$(PDFCROP) example-ccr.pdf example-ccr-crop.pdf
+	@$(PDF2SVG) example-ccr-crop.pdf example-ccr.svg
 
 example-c-chopped-dash:
 	@./poincare --verbose --normalize --bezier --draw_hidden_dashed \
@@ -161,6 +170,9 @@ example-c-chopped-dash:
 	$(METAPOST) example-cd.mp
 	$(TEX) -jobname=example-cd '\input epsf\nopagenumbers\centerline{\epsfxsize=155mm\epsfbox{example-cd.1}}\bye'
 	$(DVIPS) $(DVIPSOPTS) example-cd -o example-cd.eps
+	@$(PS2PDF) example-cd.eps example-cd.pdf
+	@$(PDFCROP) example-cd.pdf example-cd-crop.pdf
+	@$(PDF2SVG) example-cd-crop.pdf example-cd.svg
 
 #
 # example-d:
