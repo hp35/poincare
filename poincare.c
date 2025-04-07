@@ -348,7 +348,11 @@
 |  250407:  (Gotland) Added check for coinciding points in the                |
 | [v.1.25]  get_tickmark_screen_coordinates(...) routine; now returning       |
 |           (NAN,NAN) as screen coordinate for these special cases, to be     |
-|           checked and handled by the caller.                                |
+|           checked and handled by the caller. Fixed a bug in the tickmark    |
+|           generation, where we now ignore tickmarks in cases where two      |
+|           points on the Poincare are found to be degenerate, in which case  |
+|           no orthogonal direction is possible to find for the tickmark      |
+|           projection.                                                       |
 |                                                                             |
 | Example of usage (the figure on the front page of my PhD thesis):           |
 |                                                                             |
