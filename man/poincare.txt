@@ -185,16 +185,20 @@ OPTIONS
                       XMIN = YMIN = ZMIN = 0.3 (30 %)
                       XMAX = YMAX = ZMAX = 1.5 (150 %)
 
+       --axisthickness T
+              Specifies the thickness of the  drawn  coordinate  axes  in  the
+              graph, in units of points (pt). Default: T = 0.6 pt
+
        --axislabels S
-              Specifies the labels of the coordinate axes, on the form S =  S1
-              P1  S2 P2 S3 P3, where S1, S2, and S3 are strings to use for the
+              Specifies  the labels of the coordinate axes, on the form S = S1
+              P1 S2 P2 S3 P3, where S1, S2, and S3 are strings to use for  the
               s1-, s2-, and s3-labels, respectively, and where the strings P1,
-              P2, and P3 determine the position of respective label,  relative
-              the  end  point of the arrow of respective axis. The label posi‐
+              P2,  and P3 determine the position of respective label, relative
+              the end point of the arrow of respective axis. The  label  posi‐
               tion is determined by the following syntax:
 
                       lft    Left
-                      rt     Right
+                      rgt    Right
                       top    Top
                       bot    Bottom
                       ulft   Upper left
@@ -202,54 +206,54 @@ OPTIONS
                       llft   Lower left
                       lrt    Lower right
 
-              The label strings should be expressed in plain TeX [2]  mathmode
+              The  label strings should be expressed in plain TeX [2] mathmode
               syntax.  Default: S1 = $S_1$, S2 = $S_2$, S3 = $S_3$.
 
-              Important  note:   No  blank  spaces  are  allowed  in the label
+              Important note:  No  blank  spaces  are  allowed  in  the  label
               strings.
 
        --draw_axes_inside S
-              Toggles drawing (with dashed lines) of  coordinate  axes  inside
+              Toggles  drawing  (with  dashed lines) of coordinate axes inside
               Poincare sphere.  Default: off.
 
        -n S, --normalize S
-              Instead   of   making   a  trajectory  plot  of  the  parameters
-              (s1,s2,s3), contained in the file specified by  the  -f  option,
-              instead  use the normalized parameter (s1/s0,s2/s0,s3/s0), which
-              for completely  polarized  light  corresponds  to  a  trajectory
-              mapped  directly  on the Poincare sphere, without any deviations
+              Instead  of  making  a  trajectory  plot   of   the   parameters
+              (s1,s2,s3),  contained  in  the file specified by the -f option,
+              instead use the normalized parameter (s1/s0,s2/s0,s3/s0),  which
+              for  completely  polarized  light  corresponds  to  a trajectory
+              mapped directly on the Poincare sphere, without  any  deviations
               fromthe spheres surface. This option is particularly useful when
-              only the state of polarization (and not the  intensity)  of  the
-              light  is  of  interest  (as is most often the case when dealing
+              only  the  state  of polarization (and not the intensity) of the
+              light is of interest (as is most often  the  case  when  dealing
               with the (S_1,S_2,S_3) triplet of Stokes parameters).
 
        --arrow PA PB V
-              Display an arrow, in Stokes parameter space, from point  PA,  at
-              the  command-line  specified  as  the triplet of floats S1A  S2A
+              Display  an  arrow, in Stokes parameter space, from point PA, at
+              the command-line specified as the triplet  of  floats  S1A   S2A
               S3A, to the point PB, similarly specified as S1B S2B S3B.
 
-              This option is useful for, say, pointing out  certain  operation
-              cycles  in polarization domain, or just as an easy direct way of
-              creating paths on the Poincare sphere without having to use  ex‐
-              ternal  input  files  (that is to say, using the --auxsource op‐
+              This  option  is useful for, say, pointing out certain operation
+              cycles in polarization domain, or just as an easy direct way  of
+              creating  paths on the Poincare sphere without having to use ex‐
+              ternal input files (that is to say, using  the  --auxsource  op‐
               tion).
 
-              The arrow is drawn as a circular arc onto the  Poincare  sphere,
+              The  arrow  is drawn as a circular arc onto the Poincare sphere,
               through the closest path between the points.  The --arrow option
-              may  appear  repeated  times,for producing multiple arrows. Cur‐
-              rently there is a limit of 24 arrows in one single Poincare  map
-              (which  should  do  for  most people).  The last argument V is a
+              may appear repeated times,for producing  multiple  arrows.  Cur‐
+              rently  there is a limit of 24 arrows in one single Poincare map
+              (which should do for most people).  The last  argument  V  is  a
               pair of float values which determines the style of the drawn ar‐
-              row. The pair V should be specified as V1  V2  on  the  command-
+              row.  The  pair  V  should be specified as V1 V2 on the command-
               line.
 
-              The  first parameter V1 determines the line-type of the arrow to
+              The first parameter V1 determines the line-type of the arrow  to
               draw.  The rules are:
                       -0.5 <= V1 < 0.5   -   Solid line
                        0.5 <= V1 < 1.5   -   Dashed line
 
-              The second parameter, V2, determines the blackness of the  arrow
-              to  draw,  where  V2  ==  0  corresponds to white and V2 == 1 to
+              The  second parameter, V2, determines the blackness of the arrow
+              to draw, where V2 == 0 corresponds to  white  and  V2  ==  1  to
               black.
 
 SUFFIX CONVENTIONS OF THE FILES
@@ -283,9 +287,9 @@ AUTHOR
        Written by Fredrik Jonsson 1997-2025.
 
 COPYRIGHT
-       Copyright © 2025 Fredrik Jonsson, under GNU GPLv3  <https://gnu.org/li‐
+       Copyright  © 2025 Fredrik Jonsson, under GNU GPLv3 <https://gnu.org/li‐
        censes/gpl.html>.
-       This  is  free  software:  you  are free to change and redistribute it.
+       This is free software: you are free  to  change  and  redistribute  it.
        There is NO WARRANTY, to the extent permitted by law.
 
 SEE ALSO

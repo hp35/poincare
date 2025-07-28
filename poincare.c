@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | File: poincare.c [ANSI-C conforming source code]                            |
 | Created:       November 17, 1997, Fredrik Jonsson <fj@optics.kth.se>        |
-| Last modified: April 7, 2025, Fredrik Jonsson <http://jonsson.eu>           |
+| Last modified: July 28, 2025, Fredrik Jonsson <http://jonsson.eu>           |
 | Description:                                                                |
 |       This program creates maps of Stokes parameters, visualized as         |
 |       trajectories on the Poincare sphere. The program generates MetaPost   |
@@ -978,6 +978,11 @@ void showsomehelp(void) {
  "                                   <xmax> = <ymax> = <zmax> = 1.5 (150 %%)\n"
  "\n");
    fprintf(stdout,
+ " --axisthickness <t>     Specifies the thickness of the drawn coordinate\n"
+ "                         axes, in units of points (pt). Default: 0.6 pt\n"
+ "                         (Internally of the Poincare program specified by\n"
+ "                         the DEFAULT_ARROW_THICKNESS constant.)");
+   fprintf(stdout,
  " --axislabels <s>        Specifies the labels of the coordinate axes, on\n"
  "                         the form\n"
  "                           <s> = <s1> <p1> <s2> <p2> <s3> <p3>\n"
@@ -1278,6 +1283,14 @@ pmap parse_command_line(int argc, char *argv[]) {
       } else if (!strcmp(argv[no_arg-argc],"--reverse_arrow_paths")) {
          display_parsed_command_line_option(&map,argv[no_arg-argc]);
          map.reverse_arrow_paths=(map.reverse_arrow_paths?0:1);
+      } else if (!strcmp(argv[no_arg-argc],"--axisthickness")) {
+         display_parsed_command_line_option(&map,argv[no_arg-argc]);
+         --argc;
+         if (!sscanf(argv[no_arg-argc],"%lf",&map.coordaxisthickness)) {
+            fprintf(stderr,\
+              "%s: Couldn't get coordinate axis thickness in [pt]!\n",progname);
+            exit(FAILURE);
+         }
       } else if (!strcmp(argv[no_arg-argc],"--arrowthickness")) {
          display_parsed_command_line_option(&map,argv[no_arg-argc]);
          --argc;
@@ -2636,7 +2649,7 @@ void add_scanned_tickmarks(FILE *outfileptr,stoketraject *st,pmap *map,
          * direction based on two coinciding points on the Poincare sphere),
          * and we hence simply avoid this particular tickmark.
          */
-        fprintf(stderr,"%s: Screen coordinates for tickmark No.%d was\n",
+        fprintf(stderr,"%s: Screen coordinates for tickmark No.%ld was\n",
                 progname,k);
         fprintf(stderr,"%s: returned as NAN, indicating an invalid tickmark.\n",
                 progname);
